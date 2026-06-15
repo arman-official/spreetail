@@ -1,0 +1,69 @@
+
+### `DECISIONS.md`
+```markdown
+# DECISIONS.md - Decision Log
+
+## Decision 1: Reject vs Fix vs Skip for Anomalies
+
+**Options considered:**
+- Reject all anomalies (strict)
+- Fix silently (magic)
+- Fix with user confirmation (deliberate)
+
+**Chosen:** Fix with user confirmation via preview step
+
+**Why:** Meera specifically asked to "approve anything the app deletes or changes." The preview step gives users control while automating the tedious parts.
+
+## Decision 2: Currency Conversion Strategy
+
+**Options considered:**
+- Treat USD as INR (spreadsheet approach)
+- Use fixed rate (e.g., 83 INR/USD)
+- Use historical daily rates
+
+**Chosen:** Historical daily rates with fallback
+
+**Why:** Priya said "That can't be right." Historical rates are fair and auditable. Fallback to previous day if API fails.
+
+## Decision 3: User Matching for Name Variations
+
+**Options considered:**
+- Case-sensitive exact match
+- Case-insensitive match
+- Fuzzy matching (Levenshtein distance)
+
+**Chosen:** Fuzzy matching with threshold 0.8 + user confirmation
+
+**Why:** CSV has "priya", "Priya", "Priya S" - all the same person. Fuzzy match catches these without false positives on truly different names.
+
+## Decision 4: Time-Scoped Membership
+
+**Options considered:**
+- Ignore membership dates (include everyone)
+- Filter by join/leave dates
+
+**Chosen:** Filter by join/leave dates in balance calculation
+
+**Why:** Sam said "Why would March electricity affect my balance?" This directly addresses that request.
+
+## Decision 5: Settlement vs Expense Detection
+
+**Options considered:**
+- Treat all rows as expenses
+- Detect settlements by split_type being empty
+- Require manual flag
+
+**Chosen:** Auto-detect by empty split_type
+
+**Why:** Row 25 has no split_type and "this is a settlement not an expense" in notes. Auto-detection matches user intent.
+
+## Decision 6: Debt Simplification Algorithm
+
+**Options considered:**
+- Show all individual debts
+- Show net balances only
+- Greedy simplification (minimum transactions)
+
+**Chosen:** Greedy simplification + detailed breakdown
+
+**Why:** Aisha wants "one number per person" (net balance). Rohan wants "see exactly which expenses" (breakdown). Both satisfied.
